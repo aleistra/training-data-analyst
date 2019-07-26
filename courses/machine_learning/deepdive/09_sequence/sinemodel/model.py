@@ -49,7 +49,6 @@ def dnn_model(features, mode, params):
     predictions = tf.layers.dense(h2, 1, activation=None)  # linear output: regression
     return predictions
 
-
 def cnn_model(features, mode, params):
     X = tf.reshape(features[TIMESERIES_COL],
                    [-1, N_INPUTS, 1])  # as a 1D "sequence" with only one time-series observation (height)

@@ -29,20 +29,19 @@ from oauth2client.client import GoogleCredentials
 from google.appengine.api import app_identity
 
 # authenticate
-credentials = # TODO
-api = # TODO
-project = app_identity.get_application_id()
-model_name = os.getenv('MODEL_NAME', 'babyweight')
-version_name = os.getenv('VERSION_NAME', 'ml_on_gcp')
-
-
 app = Flask(__name__)
 
+credentials = GoogleCredentials.get_application_default()
+api = discovery.build('ml', 'v1', credentials=credentials)
+project = app_identity.get_application_id()
+model_name = os.getenv('MODEL_NAME', 'babyweight')
+version_name = os.getenv('VERSION_NAME', 'ml_on_gcp_v3')
 
 def get_prediction(features):
   input_data = {'instances': [features]}
-  parent = # TODO
-  prediction = # TODO
+  parent = 'projects/%s/models/%s/versions/%s' % (project, model_name, version_name)
+  prediction = api.projects().predict(body=input_data, name=parent).execute()
+  print(prediction)
   return prediction['predictions'][0]['predictions'][0]
 
 
@@ -68,6 +67,10 @@ def predict():
       return 'Multiple(2+)'
     return pluralities[val]
 
+  def marital_status(val):
+        status = {'Married': 'True', 'Not married': 'False'}
+        return status[val]
+
   data = json.loads(request.data.decode())
   mandatory_items = ['baby_gender', 'mother_age',
                      'plurality', 'gestation_weeks']
@@ -76,11 +79,17 @@ def predict():
       return jsonify({'result': 'Set all items.'})
 
   features = {}
-  features['key'] = 'nokey'
+  #features['key'] = 'nokey'
   features['is_male'] = gender2str(data['baby_gender'])
   features['mother_age'] = float(data['mother_age'])
   features['plurality'] = plurality2str(data['plurality'])
-  features['gestation_weeks'] = # TODO: get gestation_weeks and cast to float
+  features['gestation_weeks'] = float(data['gestation_weeks'])
+  features['mother_race'] = "1"
+  features['father_race'] = "1"
+  features['cigarette_use'] = "False"
+  features['ever_born'] = "1"
+  features['mother_married'] = marital_status(data['ismarried'])
+  #features['mother_married'] = "True"
 
   prediction = get_prediction(features)
   return jsonify({'result': '{:.2f} lbs.'.format(prediction)})

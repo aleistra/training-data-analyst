@@ -55,8 +55,8 @@ def cnn_model(hparams):
     model.add(tf.keras.layers.InputLayer(input_shape = [HEIGHT, WIDTH, 1], name = "image")) # shape = (?, 28, 28, 1)
     model.add(tf.keras.layers.Conv2D(filters = nfil1, kernel_size = ksize1, padding = "same", activation = tf.nn.relu)) # shape = (?, 28, 28, nfil1)
     model.add(tf.keras.layers.MaxPooling2D(pool_size = 2, strides = 2)) # shape = (?, 14, 14, nfil1)
-    model.add(# TODO: Apply a second convolution with nfil2 filters) # shape = (?, 14, 14, nfil2)
-    model.add(# TODO: Apply a pooling layer with pool_size = 2 and strides = 2) # shape = (?, 7, 7, nfil2)
+    model.add(tf.keras.layers.Conv2D(filters=nfil2, kernel_size=ksize2, padding="same", activation = tf.nn.relu)) # shape = (?, 14, 14, nfil2)
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=2, strides = 2))
     model.add(tf.keras.layers.Flatten())
 
     # Apply batch normalization
@@ -77,7 +77,7 @@ def cnn_model(hparams):
         model.add(tf.keras.layers.BatchNormalization())
         
     model.add(tf.keras.layers.Dense(units = NCLASSES, activation = tf.nn.softmax, name = "probabilities"))
-    pass
+    return model
 
 # Create serving input function for inference
 def serving_input_fn():

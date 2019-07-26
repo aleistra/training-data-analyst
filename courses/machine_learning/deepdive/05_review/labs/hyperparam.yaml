@@ -1,0 +1,19 @@
+trainingInput:
+    scaleTier: STANDARD_1
+    hyperparameters:
+        hyperparameterMetricTag: rmse
+        goal: MINIMIZE
+        maxTrials: 20
+        maxParallelTrials: 5
+        enableTrialEarlyStopping: True
+        params:
+        - parameterName: ntrees
+          type: INTEGER
+          minValue: 400
+          maxValue: 1000
+          scaleType: UNIT_LINEAR_SCALE
+        - parameterName: maxdepth
+          type: INTEGER
+          minValue: 2
+          maxValue: 5
+          scaleType: UNIT_LINEAR_SCALE

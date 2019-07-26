@@ -1,0 +1,23 @@
+trainingInput:
+  scaleTier: BASIC
+  hyperparameters:
+    goal: MINIMIZE
+    maxTrials: 10
+    maxParallelTrials: 10
+    hyperparameterMetricTag: rmse
+    enableTrialEarlyStopping: True
+    algorithm: GRID_SEARCH
+    params:
+    - parameterName: hidden_units
+      type: CATEGORICAL
+      categoricalValues:
+      - 10,10
+      - 64,32
+      - 128,64,32
+      - 32,64,128
+      - 128,128,128
+      - 32,32,32
+      - 256,128,64,32
+      - 256,256,256,32
+      - 256,256,256,256
+      - 512,256,128,64,32

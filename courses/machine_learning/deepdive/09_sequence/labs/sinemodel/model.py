@@ -38,24 +38,32 @@ def init(hparams):
 
 def linear_model(features, mode, params):
     X = features[TIMESERIES_COL]
-    #TODO: finish linear model
-    pass
+    predictions = tf.layers.dense(X, 1, activation=None)
+    return predictions
 
 def dnn_model(features, mode, params):
-  X = features[TIMESERIES_COL]
-  #TODO: finish DNN model
-  pass
+    X = features[TIMESERIES_COL]
+    l1 = tf.layers.dense(X, 10, activation=tf.nn.relu)
+    l2 = tf.layers.dense(l1, 4, activation=tf.nn.relu)
+    predictions = tf.layers.dense(l2, 1, activation=None)  # linear output: regression
+    return predictions
 
 def cnn_model(features, mode, params):
-  X = tf.reshape(features[TIMESERIES_COL], [-1, N_INPUTS, 1]) # as a 1D "sequence" with only one time-series observation (height)
-  #TODO: finish CNN model
-  pass
+    X = tf.reshape(features[TIMESERIES_COL], [-1, N_INPUTS, 1]) # as a 1D "sequence" with only one time-series observation (height)
+    l1 = tf.layers.Conv1D(X, filters=N_INPUTS // 2, kernel_size=3, strides=1, activation=tf.nn.relu)
+    l2 = tf.layers.AveragePooling1D(l1, pool_size=2, strides=1)  
+    predictions = tf.layers.dense(l3, 1, activation=None)
+    return predictions
 
 def rnn_model(features, mode, params):
-  # 1. dynamic_rnn needs 3D shape: [BATCH_SIZE, N_INPUTS, 1]
-  x = tf.reshape(features[TIMESERIES_COL], [-1, N_INPUTS, 1])
-  #TODO: finish rnn model
-  pass
+    CELL_SIZE = N_INPUTS // 3
+    x = tf.reshape(features[TIMESERIES_COL], [-1, N_INPUTS, 1])
+    cell = tf.nn.rnn_cell.GRUCell(CELL_SIZE)
+    outputs, state = tf.nn.dynamic_rnn(cell, x, dtype = tf.float32)
+    h1 = tf.layers.dense(outputs[:, -1, :], N_INPUTS // 2, activation=tf.nn.relu)
+    predictions = tf.layers.dense(h1, 1, activation=None)
+    return predictions
+
 
 # 2-layer RNN
 def rnn2_model(features, mode, params):
